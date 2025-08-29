@@ -1,0 +1,27 @@
+{
+  "name": "telegram-respondio-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot with respond.io integration for Netlify",
+  "main": "netlify/functions/telegram-bot.js",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step required'",
+    "setup-webhook": "node setup-webhook.js",
+    "test": "echo 'No tests specified'"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "netlify-cli": "^23.4.2"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "respond.io",
+    "netlify",
+    "serverless"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

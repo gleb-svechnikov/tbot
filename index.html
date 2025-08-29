@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Bot - Deployment Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .status {
+            background: #27ae60;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+
+        .endpoint-list {
+            list-style: none;
+        }
+
+        .endpoint-item {
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+
+        .endpoint-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            background: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin: 8px 0;
+            word-break: break-all;
+        }
+
+        .endpoint-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background: #2980b9;
+        }
+
+        .button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .features {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .features ul {
+            list-style-position: inside;
+            color: #7f8c8d;
+        }
+
+        .features li {
+            margin-bottom: 8px;
+        }
+
+        .footer {
+            background: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header, .content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="status">Online</div>
+            <h1>Telegram Bot</h1>
+            <p class="subtitle">respond.io Integration</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>Endpoints</h2>
+                <ul class="endpoint-list">
+                    <li class="endpoint-item">
+                        <div class="endpoint-name">Telegram Webhook</div>
+                        <div class="endpoint-url">/.netlify/functions/telegram-bot</div>
+                        <div class="endpoint-description">Receives messages from Telegram users</div>
+                    </li>
+                    
+                    <li class="endpoint-item">
+                        <div class="endpoint-name">respond.io Webhook</div>
+                        <div class="endpoint-url">/.netlify/functions/respond-io-webhook</div>
+                        <div class="endpoint-description">Handles replies from support agents</div>
+                    </li>
+                    
+                    <li class="endpoint-item">
+                        <div class="endpoint-name">Health Check</div>
+                        <div class="endpoint-url">/.netlify/functions/health</div>
+                        <div class="endpoint-description">Monitor deployment status</div>
+                        <button class="button" onclick="testHealth()">Test</button>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Features</h2>
+                <div class="features">
+                    <ul>
+                        <li>/start command with Yes/No buttons</li>
+                        <li>Bidirectional messaging</li>
+                        <li>All media types supported</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Next Steps:</strong> Configure Custom Channel in respond.io and update RESPOND_IO_CHANNEL_ID</p>
+        </div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Testing...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/.netlify/functions/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Health check passed\n\n' + JSON.stringify(data, null, 2));
+                } else {
+                    alert('Health check failed: ' + response.status);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
